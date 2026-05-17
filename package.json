@@ -1,0 +1,87 @@
+{
+  "name": "candela-vscode",
+  "displayName": "Candela — LLM Cost Tracker",
+  "description": "Real-time LLM cost tracking, budget warnings, and observability dashboard for Candela",
+  "version": "0.1.0",
+  "publisher": "candelahq",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "llm",
+    "ai",
+    "cost-tracking",
+    "observability",
+    "candela",
+    "opentelemetry"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "candela.showDashboard",
+        "title": "Candela: Show Dashboard"
+      },
+      {
+        "command": "candela.showCostSummary",
+        "title": "Candela: Show Cost Summary"
+      },
+      {
+        "command": "candela.checkBudget",
+        "title": "Candela: Check Budget"
+      },
+      {
+        "command": "candela.refreshStatus",
+        "title": "Candela: Refresh Status"
+      }
+    ],
+    "configuration": {
+      "title": "Candela",
+      "properties": {
+        "candela.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8181",
+          "description": "URL of the Candela server"
+        },
+        "candela.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show cost tracker in the status bar"
+        },
+        "candela.budgetWarning.threshold": {
+          "type": "number",
+          "default": 80,
+          "description": "Show warning when budget usage exceeds this percentage"
+        },
+        "candela.autoRefresh.intervalSeconds": {
+          "type": "number",
+          "default": 60,
+          "description": "Auto-refresh interval for cost data (0 to disable)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.100.0",
+    "typescript": "^5.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/candelahq/candela-vscode.git"
+  },
+  "homepage": "https://candelahq.com",
+  "license": "Apache-2.0"
+}
