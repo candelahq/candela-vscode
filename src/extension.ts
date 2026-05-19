@@ -136,7 +136,7 @@ async function updateStatusBar(): Promise<void> {
     for (const g of data.activeGrants) {
       if (g.isExhausted) continue;
       const expiryNote = g.expiresAt
-        ? ` — expires ${g.expiresAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+        ? ` — expires ${g.expiresAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
         : "";
       tooltipLines.push(
         `   🎁 ${formatCost(g.remainingUsd)} grant (${g.reason || "Bonus"}${expiryNote})`
@@ -242,7 +242,7 @@ async function checkBudget(): Promise<void> {
   for (const g of data.activeGrants) {
     if (g.isExhausted) continue;
     const expiryNote = g.expiresAt
-      ? ` — expires ${g.expiresAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`
+      ? ` — expires ${g.expiresAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
       : "";
     lines.push(
       `🎁 Grant: ${formatCost(g.remainingUsd)} / ${formatCost(g.amountUsd)} — ${g.reason || "Bonus"}${expiryNote}`
@@ -253,7 +253,7 @@ async function checkBudget(): Promise<void> {
     lines.push(`Total available: ${formatCost(data.totalRemainingUsd)}`);
   }
 
-  const msg = lines.join("  |  ");
+  const msg = lines.join("\n");
   if (b.percentUsed > 90) {
     vscode.window.showWarningMessage(msg);
   } else {
@@ -296,6 +296,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("candela.checkBudget", checkBudget),
     vscode.commands.registerCommand("candela.refreshStatus", async () => {
       client.invalidateCache();
+      client.resetHealth();
       consecutiveFailures = 0;
       await updateStatusBar();
       vscode.window.showInformationMessage("Candela: Status refreshed");
