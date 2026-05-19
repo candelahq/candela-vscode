@@ -55,6 +55,11 @@
           "default": true,
           "description": "Show cost tracker in the status bar"
         },
+        "candela.statusBar.showBudget": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show budget usage percentage in the status bar"
+        },
         "candela.budgetWarning.threshold": {
           "type": "number",
           "default": 80,
