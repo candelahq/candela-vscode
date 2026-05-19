@@ -66,7 +66,7 @@ Search for **"Candela"** in the VS Code Extensions panel.
 
 ## Prerequisites
 
-1. **Candela running locally**: `candela start` (requires [candela](https://github.com/candelahq/candela) v0.3.3+)
+1. **Candela running locally**: `candela start` (requires [candela](https://github.com/candelahq/candela) v0.4.6+)
 2. Extension auto-detects Candela on the configured URL
 
 If Candela is not running, the status bar shows `offline` — no errors, no noise.
