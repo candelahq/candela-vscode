@@ -3,6 +3,8 @@
 VS Code extension for [Candela](https://github.com/candelahq/candela) — real-time LLM cost tracking, rich budget warnings, and observability dashboard.
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Open VSX](https://img.shields.io/open-vsx/v/candelahq/candela-vscode)](https://open-vsx.org/extension/candelahq/candela-vscode)
+[![Version](https://img.shields.io/open-vsx/v/candelahq/candela-vscode?label=version)](https://open-vsx.org/extension/candelahq/candela-vscode)
 
 ## Features
 
@@ -47,20 +49,23 @@ Status bar turns yellow when budget exceeds the warning threshold (default 80%).
 
 ## Installation
 
-### From VSIX (Development)
+### From Open VSX
+
+Search for **"Candela"** in the Extensions panel, or install directly:
 
 ```bash
-npm install
-npm run compile
-npx vsce package
-
-# Install locally
-code --install-extension candela-vscode-*.vsix
+code --install-extension candelahq.candela-vscode
 ```
 
-### From Marketplace (Coming Soon)
+[➡️ View on Open VSX](https://open-vsx.org/extension/candelahq/candela-vscode)
 
-Search for **"Candela"** in the VS Code Extensions panel.
+### From GitHub Releases
+
+Download the `.vsix` from [Releases](https://github.com/candelahq/candela-vscode/releases) and install:
+
+```bash
+code --install-extension candela-vscode-*.vsix
+```
 
 ---
 
@@ -89,8 +94,8 @@ This extension works independently of your AI coding tool. Route any of these th
 
 - [Candela](https://github.com/candelahq/candela) — OTel-native LLM observability platform
 - [candela-desktop](https://github.com/candelahq/candela-desktop) — macOS desktop app
-- [opencode-candela](https://github.com/candelahq/opencode-candela) — OpenCode plugin
-- [candela-cline](https://github.com/candelahq/candela-cline) — Cline plugin
+- [opencode-candela](https://www.npmjs.com/package/opencode-candela) — OpenCode plugin
+- [candela-cline](https://www.npmjs.com/package/candela-cline) — Cline plugin
 
 ---
 
