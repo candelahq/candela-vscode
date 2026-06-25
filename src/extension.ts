@@ -11,7 +11,7 @@
  */
 
 import * as vscode from "vscode";
-import { CandelaClient, type DashboardData } from "./candela-client";
+import { CandelaClient } from "./candela-client";
 import { discoverCandelaUrl } from "./discover";
 
 let statusBarItem: vscode.StatusBarItem;
@@ -212,7 +212,9 @@ async function showCostSummary(): Promise<void> {
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
     const url = config.get<string>("serverUrl", "http://localhost:8181");
-    vscode.env.openExternal(vscode.Uri.parse(`${url.replace(/:(\d+)(?=\/|$)/, ":3000")}`));
+    vscode.env.openExternal(
+      vscode.Uri.parse(`${url.replace(/:(\d+)(?=\/|$)/, ":3000")}`),
+    );
   }
 }
 

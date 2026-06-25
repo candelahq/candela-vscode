@@ -79,12 +79,12 @@ function parseBudget(raw: Record<string, unknown>): BudgetInfo | null {
   if (!raw) return null;
   const limitUsd = Number(raw.limitUsd ?? raw.limit_usd ?? 0);
   const spentUsd = Number(raw.spentUsd ?? raw.spent_usd ?? 0);
-  if (!isFinite(limitUsd) || !isFinite(spentUsd)) return null;
+  if (!Number.isFinite(limitUsd) || !Number.isFinite(spentUsd)) return null;
   const remaining = Math.max(0, limitUsd - spentUsd);
   const fraction = limitUsd > 0 ? Math.min(1, spentUsd / limitUsd) : 0;
   const periodEndRaw = (raw.periodEnd ?? raw.period_end) as string | undefined;
   const periodEnd = periodEndRaw ? new Date(periodEndRaw) : null;
-  if (periodEnd && isNaN(periodEnd.getTime())) return null;
+  if (periodEnd && Number.isNaN(periodEnd.getTime())) return null;
   return {
     limitUsd,
     spentUsd,
@@ -299,7 +299,7 @@ export class CandelaClient {
         const rawRemaining = Number(
           bc.totalRemainingUsd ?? bc.total_remaining_usd ?? 0,
         );
-        if (isFinite(rawRemaining) && rawRemaining >= 0) {
+        if (Number.isFinite(rawRemaining) && rawRemaining >= 0) {
           totalRemainingUsd = rawRemaining;
         }
       }
@@ -363,7 +363,7 @@ export class CandelaClient {
           const rawRemaining = Number(
             b.totalRemainingUsd ?? b.total_remaining_usd ?? 0,
           );
-          if (isFinite(rawRemaining) && rawRemaining >= 0) {
+          if (Number.isFinite(rawRemaining) && rawRemaining >= 0) {
             totalRemainingUsd = rawRemaining;
           }
         } catch {
