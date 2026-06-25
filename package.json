@@ -76,9 +76,13 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "vsce package"
+    "package": "vsce package",
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
+    "format": "biome format --write src/"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
     "@types/node": "^22.0.0",
     "@types/vscode": "^1.100.0",
     "typescript": "^5.8.0"

@@ -11,7 +11,7 @@
  */
 
 import * as vscode from "vscode";
-import { CandelaClient, type DashboardData } from "./candela-client";
+import { CandelaClient } from "./candela-client";
 import { discoverCandelaUrl } from "./discover";
 
 let statusBarItem: vscode.StatusBarItem;
@@ -84,7 +84,7 @@ async function updateStatusBar(): Promise<void> {
       const config = vscode.workspace.getConfiguration("candela");
       const normalInterval = config.get<number>(
         "autoRefresh.intervalSeconds",
-        60
+        60,
       );
       rescheduleInterval(normalInterval);
     }
@@ -102,7 +102,7 @@ async function updateStatusBar(): Promise<void> {
 
     if (showBudget && data.budget) {
       parts.push(
-        `${budgetEmoji(data.budget.usedFraction)}${data.budget.percentUsed.toFixed(0)}%`
+        `${budgetEmoji(data.budget.usedFraction)}${data.budget.percentUsed.toFixed(0)}%`,
       );
     }
 
@@ -125,7 +125,7 @@ async function updateStatusBar(): Promise<void> {
       tooltipLines.push(
         ``,
         `💰 Budget: ${formatCost(b.spentUsd)} / ${formatCost(b.limitUsd)} (${b.percentUsed.toFixed(0)}% used)`,
-        `   Remaining: ${formatCost(b.remainingUsd)}`
+        `   Remaining: ${formatCost(b.remainingUsd)}`,
       );
       if (b.resetLabel) {
         tooltipLines.push(`   ⏰ ${b.resetLabel}`);
@@ -139,12 +139,14 @@ async function updateStatusBar(): Promise<void> {
         ? ` — expires ${g.expiresAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
         : "";
       tooltipLines.push(
-        `   🎁 ${formatCost(g.remainingUsd)} grant (${g.reason || "Bonus"}${expiryNote})`
+        `   🎁 ${formatCost(g.remainingUsd)} grant (${g.reason || "Bonus"}${expiryNote})`,
       );
     }
 
     if (data.totalRemainingUsd !== null) {
-      tooltipLines.push(`   Total available: ${formatCost(data.totalRemainingUsd)}`);
+      tooltipLines.push(
+        `   Total available: ${formatCost(data.totalRemainingUsd)}`,
+      );
     }
 
     tooltipLines.push(``, `Click for details`);
@@ -153,7 +155,7 @@ async function updateStatusBar(): Promise<void> {
     // Warning background
     if (data.budget && data.budget.percentUsed > threshold) {
       statusBarItem.backgroundColor = new vscode.ThemeColor(
-        "statusBarItem.warningBackground"
+        "statusBarItem.warningBackground",
       );
     } else {
       statusBarItem.backgroundColor = undefined;
@@ -168,7 +170,7 @@ async function showCostSummary(): Promise<void> {
   const data = await client.getDashboardData(24);
   if (!data || data.usage.requestCount === 0) {
     vscode.window.showInformationMessage(
-      "Candela: No usage data available. Is Candela running?"
+      "Candela: No usage data available. Is Candela running?",
     );
     return;
   }
@@ -178,7 +180,7 @@ async function showCostSummary(): Promise<void> {
     .slice(0, 5)
     .map(
       (m) =>
-        `• ${m.model} (${m.provider}): ${formatTokens(m.totalTokens)} tokens, ${formatCost(m.totalCostUsd)}`
+        `• ${m.model} (${m.provider}): ${formatTokens(m.totalTokens)} tokens, ${formatCost(m.totalCostUsd)}`,
     );
 
   const lines = [
@@ -197,20 +199,22 @@ async function showCostSummary(): Promise<void> {
     const b = data.budget;
     lines.push(
       "",
-      `💰 Budget: ${formatCost(b.spentUsd)} / ${formatCost(b.limitUsd)} (${b.percentUsed.toFixed(0)}% used${b.resetLabel ? `, ${b.resetLabel}` : ""})`
+      `💰 Budget: ${formatCost(b.spentUsd)} / ${formatCost(b.limitUsd)} (${b.percentUsed.toFixed(0)}% used${b.resetLabel ? `, ${b.resetLabel}` : ""})`,
     );
   }
 
   const selection = await vscode.window.showInformationMessage(
     lines.join("\n"),
     "Open Dashboard",
-    "Dismiss"
+    "Dismiss",
   );
 
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
     const url = config.get<string>("serverUrl", "http://localhost:8181");
-    vscode.env.openExternal(vscode.Uri.parse(`${url.replace("8181", "3000")}`));
+    vscode.env.openExternal(
+      vscode.Uri.parse(`${url.replace(/:(\d+)(?=\/|$)/, ":3000")}`),
+    );
   }
 }
 
@@ -219,7 +223,7 @@ async function checkBudget(): Promise<void> {
   const data = await client.getDashboardData(24);
   if (!data?.budget) {
     vscode.window.showInformationMessage(
-      "Candela: No budget information available."
+      "Candela: No budget information available.",
     );
     return;
   }
@@ -245,7 +249,7 @@ async function checkBudget(): Promise<void> {
       ? ` — expires ${g.expiresAt.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`
       : "";
     lines.push(
-      `🎁 Grant: ${formatCost(g.remainingUsd)} / ${formatCost(g.amountUsd)} — ${g.reason || "Bonus"}${expiryNote}`
+      `🎁 Grant: ${formatCost(g.remainingUsd)} / ${formatCost(g.amountUsd)} — ${g.reason || "Bonus"}${expiryNote}`,
     );
   }
 
@@ -272,7 +276,7 @@ export function activate(context: vscode.ExtensionContext): void {
   if (config.get<boolean>("statusBar.enabled", true)) {
     statusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Right,
-      50
+      50,
     );
     statusBarItem.command = "candela.showCostSummary";
     statusBarItem.text = "$(loading~spin) Candela";
@@ -285,7 +289,7 @@ export function activate(context: vscode.ExtensionContext): void {
     // Auto-refresh
     const intervalSeconds = config.get<number>(
       "autoRefresh.intervalSeconds",
-      60
+      60,
     );
     rescheduleInterval(intervalSeconds);
   }
@@ -303,9 +307,9 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     vscode.commands.registerCommand("candela.showDashboard", () => {
       vscode.env.openExternal(
-        vscode.Uri.parse(serverUrl.replace("8181", "3000"))
+        vscode.Uri.parse(serverUrl.replace(/:(\d+)(?=\/|$)/, ":3000")),
       );
-    })
+    }),
   );
 
   // Watch for config changes — invalidate cache + recreate client
@@ -315,18 +319,18 @@ export function activate(context: vscode.ExtensionContext): void {
         const newConfig = vscode.workspace.getConfiguration("candela");
         const newUrl = newConfig.get<string>(
           "serverUrl",
-          "http://localhost:8181"
+          "http://localhost:8181",
         );
         client = new CandelaClient(newUrl, 30_000);
         consecutiveFailures = 0;
         const newInterval = newConfig.get<number>(
           "autoRefresh.intervalSeconds",
-          60
+          60,
         );
         rescheduleInterval(newInterval);
         updateStatusBar();
       }
-    })
+    }),
   );
 }
 
