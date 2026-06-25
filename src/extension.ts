@@ -212,7 +212,7 @@ async function showCostSummary(): Promise<void> {
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
     const url = config.get<string>("serverUrl", "http://localhost:8181");
-    vscode.env.openExternal(vscode.Uri.parse(`${url.replace("8181", "3000")}`));
+    vscode.env.openExternal(vscode.Uri.parse(`${url.replace(/:(\d+)(?=\/|$)/, ":3000")}`));
   }
 }
 
@@ -305,7 +305,7 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     vscode.commands.registerCommand("candela.showDashboard", () => {
       vscode.env.openExternal(
-        vscode.Uri.parse(serverUrl.replace("8181", "3000")),
+        vscode.Uri.parse(serverUrl.replace(/:(\d+)(?=\/|$)/, ":3000")),
       );
     }),
   );
