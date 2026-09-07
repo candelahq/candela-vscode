@@ -211,6 +211,7 @@ async function showCostSummary(): Promise<void> {
 
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
+    const url = config.get<string>("serverUrl", "http://localhost:8181");
     vscode.env.openExternal(vscode.Uri.parse(url));
   }
 }
@@ -264,7 +265,7 @@ async function checkBudget(): Promise<void> {
 
 export function activate(context: vscode.ExtensionContext): void {
   const config = vscode.workspace.getConfiguration("candela");
-  const serverUrl = config.get<string>("serverUrl") || discoverCandelaUrl();
+  let serverUrl = config.get<string>("serverUrl") || discoverCandelaUrl();
 
   // VSCode: 30s cache TTL to prevent redundant calls during rapid polling
   client = new CandelaClient(serverUrl, 30_000);
@@ -303,8 +304,12 @@ export function activate(context: vscode.ExtensionContext): void {
       vscode.window.showInformationMessage("Candela: Status refreshed");
     }),
     vscode.commands.registerCommand("candela.showDashboard", () => {
-      vscode.env.openExternal(vscode.Uri.parse(serverUrl));
-    })
+      const currentUrl =
+        vscode.workspace.getConfiguration("candela").get<string>("serverUrl") ||
+        serverUrl ||
+        "http://localhost:8181";
+      vscode.env.openExternal(vscode.Uri.parse(currentUrl));
+    }),
   );
 
   // Watch for config changes — invalidate cache + recreate client
@@ -316,6 +321,7 @@ export function activate(context: vscode.ExtensionContext): void {
           "serverUrl",
           "http://localhost:8181",
         );
+        serverUrl = newUrl;
         client = new CandelaClient(newUrl, 30_000);
         consecutiveFailures = 0;
         const newInterval = newConfig.get<number>(
