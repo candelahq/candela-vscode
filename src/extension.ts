@@ -211,7 +211,7 @@ async function showCostSummary(): Promise<void> {
 
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
-    const url = config.get<string>("serverUrl", "http://localhost:8181");
+    const url = config.get<string>("serverUrl") || discoverCandelaUrl();
     vscode.env.openExternal(vscode.Uri.parse(url));
   }
 }
@@ -307,7 +307,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const currentUrl =
         vscode.workspace.getConfiguration("candela").get<string>("serverUrl") ||
         serverUrl ||
-        "http://localhost:8181";
+        discoverCandelaUrl();
       vscode.env.openExternal(vscode.Uri.parse(currentUrl));
     }),
   );
@@ -317,10 +317,8 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("candela")) {
         const newConfig = vscode.workspace.getConfiguration("candela");
-        const newUrl = newConfig.get<string>(
-          "serverUrl",
-          "http://localhost:8181",
-        );
+        const newUrl =
+          newConfig.get<string>("serverUrl") || discoverCandelaUrl();
         serverUrl = newUrl;
         client = new CandelaClient(newUrl, 30_000);
         consecutiveFailures = 0;
