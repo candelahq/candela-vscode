@@ -211,10 +211,8 @@ async function showCostSummary(): Promise<void> {
 
   if (selection === "Open Dashboard") {
     const config = vscode.workspace.getConfiguration("candela");
-    const url = config.get<string>("serverUrl", "http://localhost:8181");
-    vscode.env.openExternal(
-      vscode.Uri.parse(`${url.replace(/:(\d+)(?=\/|$)/, ":3000")}`),
-    );
+    const url = config.get<string>("serverUrl") || discoverCandelaUrl();
+    vscode.env.openExternal(vscode.Uri.parse(url));
   }
 }
 
@@ -267,7 +265,7 @@ async function checkBudget(): Promise<void> {
 
 export function activate(context: vscode.ExtensionContext): void {
   const config = vscode.workspace.getConfiguration("candela");
-  const serverUrl = config.get<string>("serverUrl") || discoverCandelaUrl();
+  let serverUrl = config.get<string>("serverUrl") || discoverCandelaUrl();
 
   // VSCode: 30s cache TTL to prevent redundant calls during rapid polling
   client = new CandelaClient(serverUrl, 30_000);
@@ -306,9 +304,11 @@ export function activate(context: vscode.ExtensionContext): void {
       vscode.window.showInformationMessage("Candela: Status refreshed");
     }),
     vscode.commands.registerCommand("candela.showDashboard", () => {
-      vscode.env.openExternal(
-        vscode.Uri.parse(serverUrl.replace(/:(\d+)(?=\/|$)/, ":3000")),
-      );
+      const currentUrl =
+        vscode.workspace.getConfiguration("candela").get<string>("serverUrl") ||
+        serverUrl ||
+        discoverCandelaUrl();
+      vscode.env.openExternal(vscode.Uri.parse(currentUrl));
     }),
   );
 
@@ -317,10 +317,9 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("candela")) {
         const newConfig = vscode.workspace.getConfiguration("candela");
-        const newUrl = newConfig.get<string>(
-          "serverUrl",
-          "http://localhost:8181",
-        );
+        const newUrl =
+          newConfig.get<string>("serverUrl") || discoverCandelaUrl();
+        serverUrl = newUrl;
         client = new CandelaClient(newUrl, 30_000);
         consecutiveFailures = 0;
         const newInterval = newConfig.get<number>(
